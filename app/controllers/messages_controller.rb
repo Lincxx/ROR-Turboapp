@@ -46,7 +46,8 @@ class MessagesController < ApplicationController
                               ),
             turbo_stream.update('message_counter', 
                                 html: "#{Message.count}"
-                              )
+                              ), 
+            turbo_stream.update('notice', "Message #{@message.id} created!")
             # turbo_stream.update('message_counter', 
             #                     html: Message.count
             #                   )
