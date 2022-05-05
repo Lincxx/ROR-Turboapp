@@ -71,12 +71,15 @@ class MessagesController < ApplicationController
   def update
     respond_to do |format|
       
-        format.turbo_stream do render turbo_stream: 
-                              turbo_stream.update(
+        format.turbo_stream do 
+          render turbo_stream: [
+            turbo_stream.update(
                                 @message, 
                                 partial: "messages/message", 
                                 locals: {message: @message}
-                                )
+                                ),
+            turbo_stream.update('notice', "Message Update!") 
+                              ] 
                               end
       
       if @message.update(message_params)
@@ -106,7 +109,8 @@ class MessagesController < ApplicationController
           turbo_stream.remove(@message),
           turbo_stream.update('message_counter', 
             html: "#{Message.count}"
-          )
+          ),
+          turbo_stream.update('delete', "Message Deleted!") 
         ]
       end
          
