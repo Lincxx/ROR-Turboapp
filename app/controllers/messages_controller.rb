@@ -43,7 +43,13 @@ class MessagesController < ApplicationController
             turbo_stream.prepend('messages', 
                                 partial: "messages/message", 
                                 locals: {message: @message}
+                              ),
+            turbo_stream.update('message_counter', 
+                                html: "#{Message.count}"
                               )
+            # turbo_stream.update('message_counter', 
+            #                     html: Message.count
+            #                   )
           ]
         end
         format.html { redirect_to message_url(@message), notice: "Message was successfully created." }
@@ -94,7 +100,16 @@ class MessagesController < ApplicationController
     @message.destroy
     puts "fired"
     respond_to do |format|
-      format.turbo_stream  {render turbo_stream: turbo_stream.remove(@message)}
+      format.turbo_stream do
+        render turbo_stream: [
+          turbo_stream.remove(@message),
+          turbo_stream.update('message_counter', 
+            html: "#{Message.count}"
+          )
+        ]
+      end
+         
+    
       format.html { redirect_to messages_url, notice: "Message was successfully destroyed." }
       format.json { head :no_content }
     end
